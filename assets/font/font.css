@@ -1,0 +1,26 @@
+
+@font-face {
+    font-family: 'TT Hoves';
+    src: url('TTHoves-Regular.eot');
+    src: local('TT Hoves Regular'), local('TTHoves-Regular'),
+    url('TTHoves-Regular.eot?#iefix') format('embedded-opentype'),
+    url('TTHoves-Regular.woff2') format('woff2'),
+    url('TTHoves-Regular.woff') format('woff'),
+    url('TTHoves-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('Oswald-Regular.eot');
+    src: local('Oswald Regular'), local('Oswald-Regular'),
+    url('Oswald-Regular.eot?#iefix') format('embedded-opentype'),
+    url('Oswald-Regular.woff2') format('woff2'),
+    url('Oswald-Regular.woff') format('woff'),
+    url('Oswald-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
