@@ -383,7 +383,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    gsap.registerPlugin(ScrollTrigger);
 
     const mistakesTitle = document.querySelector(".mistakes-title");
     const mistakesMain = document.querySelector(".mistakes-main");
@@ -443,13 +442,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-// =====================================================
-// ОБЩИЙ ПЕРЕСЧЁТ ПОСЛЕ ПОЛНОЙ ЗАГРУЗКИ СТРАНИЦЫ
-// (картинки, шрифты, всё содержимое) — ОБЯЗАТЕЛЬНО В САМОМ КОНЦЕ ФАЙЛА
-// =====================================================
-window.addEventListener('load', () => {
-    ScrollTrigger.refresh();
-});
+
 
 // =====================================================
 // ПЕРЕСЧЁТ ПРИ ИЗМЕНЕНИИ РАЗМЕРА ОКНА / ЭКРАНА
