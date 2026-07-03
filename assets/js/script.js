@@ -380,44 +380,47 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 6: MISTAKES
 // =====================================================
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
+    gsap.registerPlugin(ScrollTrigger);
 
     const mistakesTitle = document.querySelector(".mistakes-title");
-    const mistakesMain   = document.querySelector(".mistakes-main");
+    const mistakesMain = document.querySelector(".mistakes-main");
+
     if (!mistakesTitle || !mistakesMain) return;
 
     gsap.set(mistakesTitle, {
-        opacity: 0,
-        y: 320
+        y: 320,
+        opacity: 0
     });
 
-    const mistakesTl = gsap.timeline({
+    const tl = gsap.timeline({
+        defaults: {
+            ease: "none"
+        },
         scrollTrigger: {
             trigger: mistakesMain,
             start: "top top",
-            end: "+=150%",
+            end: "+=100%",
             pin: true,
-            scrub: true,
+            scrub: 1,
+            pinSpacing: true,
             anticipatePin: 1,
-            invalidateOnRefresh: true
+            invalidateOnRefresh: true,
+            fastScrollEnd: true
         }
     });
 
-    mistakesTl.to(mistakesTitle, {
-        opacity: 1,
+    tl.to(mistakesTitle, {
         y: 0,
-        ease: "none",
-        duration: 1
-    }, 0);
+        opacity: 1,
+        duration: 0.5
+    });
 
-    // сразу после появления, без "мёртвой" паузы
-    mistakesTl.to(mistakesTitle, {
+    tl.to(mistakesTitle, {
         y: -450,
         opacity: 0,
-        ease: "none",
-        duration: 1
-    }, 1);
-
+        duration: 0.5
+    });
 });
 
 
