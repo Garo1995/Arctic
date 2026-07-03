@@ -6,30 +6,37 @@ $(document).ready(function () {
 
 gsap.registerPlugin(ScrollTrigger);
 
-const panels = gsap.utils.toArray(".panel");
+window.addEventListener('DOMContentLoaded', () => {
 
-// Все панели, кроме первой, начинаются ниже экрана
-gsap.set(panels.slice(1), {
-    yPercent: 100
-});
+    const panels = gsap.utils.toArray(".panel");
 
-const tl = gsap.timeline({
-    scrollTrigger:{
-        trigger:".stack",
-        start:"top top",
-        end:"+=" + (panels.length - 1) * window.innerHeight,
-        pin:true,
-        scrub:true
-    }
-});
+    if (!panels.length) return;
 
-// Каждая следующая панель плавно заезжает сверху предыдущей
-panels.slice(1).forEach(panel => {
-    tl.to(panel,{
-        yPercent:0,
-        ease:"none",
-        duration:1
+    // Все панели, кроме первой, начинаются ниже экрана
+    gsap.set(panels.slice(1), {
+        yPercent: 100
     });
+
+    const stackTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: ".stack",
+            start: "top top",
+            end: () => "+=" + (panels.length - 1) * window.innerHeight,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true
+        }
+    });
+
+    // Каждая следующая панель плавно заезжает сверху предыдущей
+    panels.slice(1).forEach(panel => {
+        stackTl.to(panel, {
+            yPercent: 0,
+            ease: "none",
+            duration: 1
+        });
+    });
+
 });
 
 
@@ -55,53 +62,69 @@ panels.slice(1).forEach(panel => {
 
 
 
+window.addEventListener('DOMContentLoaded', () => {
 
+    const infrastTitle = document.querySelector(".infrast-title");
+    const infrastSec   = document.querySelector(".infrast-sec");
+    const tempEl       = document.querySelector(".temp");
 
+    if (!infrastTitle || !infrastSec || !tempEl) return;
 
+    const infraNumber = { value: 0 };
 
-const number = { value: 0 };
+    gsap.set(infrastTitle, {
+        opacity: 0,
+        y: 320
+    });
 
-gsap.set(".infrast-title", {
-    opacity: 0,
-    y: 320
+    const infraTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: infrastSec,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            scrub: true,
+            anticipatePin: 1
+        }
+    });
+
+    // 1. Появление
+    infraTl.to(infrastTitle, {
+        opacity: 1,
+        y: 0,
+        ease: "none",
+        duration: 1
+    }, 0);
+
+    // 2. Счётчик
+    infraTl.to(infraNumber, {
+        value: 50,
+        ease: "none",
+        duration: 2,
+        onUpdate() {
+            tempEl.textContent = Math.round(infraNumber.value);
+        }
+    }, 0.3);
+
+    // 3. Исчезновение — сразу после окончания счётчика, без паузы
+    infraTl.to(infrastTitle, {
+        y: -450,
+        opacity: 0,
+        ease: "none",
+        duration: 2.3
+    }, 2.3);
+
 });
 
-const infraTl = gsap.timeline({
-    scrollTrigger: {
-        trigger: ".infrast-sec",
-        start: "top top",
-        end: "+=150%", // увеличили длину скролла
-        pin: true,
-        scrub: true,
-        anticipatePin: 1
-    }
-});
 
-// 1. Появление
-infraTl.to(".infrast-title", {
-    opacity: 1,
-    y: 0,
-    ease: "none",
-    duration: 1
-}, 0);
 
-// 2. Счётчик (идёт дольше)
-infraTl.to(number, {
-    value: 50,
-    ease: "none",
-    duration: 2,
-    onUpdate() {
-        document.querySelector(".temp").textContent = Math.round(number.value);
-    }
-}, 0.3);
 
-// 3. Исчезновение начинается только после окончания счётчика
-infraTl.to(".infrast-title", {
-    y: -450,
-    opacity: 0,
-    ease: "none",
-    duration: 1
-}, 2.5);
+
+
+
+
+
+
 
 
 
@@ -397,13 +420,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-
-
-
-
 // БЛОК БЕЗ ЦИФРЫ (mistakes)
 // ============================
 function initMistakes() {
@@ -440,6 +456,17 @@ function initMistakes() {
 
 window.addEventListener('DOMContentLoaded', () => {
     initMistakes();
+});
+
+
+
+
+
+
+
+
+window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
 });
 
 
