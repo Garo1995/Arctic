@@ -255,7 +255,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 4: DIRECTIONS (слайды с бегунком)
 // =====================================================
-
 window.addEventListener('DOMContentLoaded', () => {
 
     const slides   = gsap.utils.toArray('.directions-slide');
@@ -265,8 +264,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const total = slides.length;
     let current = -1;
-
-    if (!total || !numberEl || !lineInner) return;
 
     function switchTo(index) {
         if (index === current) return;
@@ -279,13 +276,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
         gsap.to(lineInner, {
             yPercent: index * (100 / (total - 1)),
-            duration: 0.4,
+            duration: 0.3,
             ease: 'power2.out'
         });
     }
 
-    function initDesktop() {
-
+    function desktop() {
         switchTo(0);
 
         ScrollTrigger.create({
@@ -303,41 +299,28 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function initMobile() {
-        // без pin, без ScrollTrigger логики
+    function mobile() {
         switchTo(0);
 
+        // ВАЖНО: теперь реальный scroll control
         ScrollTrigger.create({
             trigger: '.directions-sec',
-            start: 'top 70%',
+            start: 'top 80%',
             end: 'bottom top',
-            onEnter: () => switchTo(0)
+
+            onUpdate: (self) => {
+                const index = Math.floor(self.progress * total);
+                switchTo(Math.min(total - 1, index));
+            }
         });
     }
 
-    ScrollTrigger.addEventListener("refreshInit", () => {
-        current = -1;
-    });
-
-    window.addEventListener('load', () => {
-
-        ScrollTrigger.matchMedia({
-
-            "(min-width: 768px)": function () {
-                initDesktop();
-            },
-
-            "(max-width: 767px)": function () {
-                initMobile();
-            }
-
-        });
-
-        ScrollTrigger.refresh();
+    ScrollTrigger.matchMedia({
+        "(min-width: 768px)": desktop,
+        "(max-width: 767px)": mobile
     });
 
 });
-
 
 
 // =====================================================
