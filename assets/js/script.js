@@ -124,19 +124,57 @@ window.addEventListener('DOMContentLoaded', () => {
     // изначально скрываем mobile-title (появится по скроллу)
     gsap.set(mobileTitle, { display: 'none', opacity: 0 });
 
+    // приподнимаем keepLetters, чтобы они всегда были поверх исчезающих соседей
+    gsap.set(keepLetters, { position: 'relative', zIndex: 10 });
+
+    // считает X и Y смещение, используя реально отрендеренное слово
+    // (с правильным кернингом) — буквы сходятся в одну линию "один в один"
     function calcOffsets() {
-        const containerRect = container.getBoundingClientRect();
-        const containerCenter = containerRect.left + containerRect.width / 2;
-        const widths = keepLetters.map(l => l.getBoundingClientRect().width);
-        const totalWidth = widths.reduce((a, b) => a + b, 0);
-        let startX = containerCenter - totalWidth / 2;
-        const offsets = [];
-        let cursor = startX;
-        keepLetters.forEach((letter, i) => {
-            const currentLeft = letter.getBoundingClientRect().left;
-            offsets.push(cursor - currentLeft);
-            cursor += widths[i];
+        const targetWord = keepIndexes.map(i => letters[i].textContent).join('');
+        const refStyle = window.getComputedStyle(keepLetters[0]);
+
+        const temp = document.createElement('span');
+        temp.style.position = 'fixed';
+        temp.style.visibility = 'hidden';
+        temp.style.left = '0';
+        temp.style.top = '0';
+        temp.style.whiteSpace = 'nowrap';
+        temp.style.fontFamily = refStyle.fontFamily;
+        temp.style.fontSize = refStyle.fontSize;
+        temp.style.fontWeight = refStyle.fontWeight;
+        temp.style.fontStyle = refStyle.fontStyle;
+        temp.style.letterSpacing = refStyle.letterSpacing;
+        temp.style.textTransform = refStyle.textTransform;
+
+        const tempLetterSpans = [];
+        targetWord.split('').forEach(ch => {
+            const s = document.createElement('span');
+            s.textContent = ch;
+            temp.appendChild(s);
+            tempLetterSpans.push(s);
         });
+
+        document.body.appendChild(temp);
+
+        const containerRect = container.getBoundingClientRect();
+        const tempRect = temp.getBoundingClientRect();
+        const targetLeft = containerRect.left + containerRect.width / 2 - tempRect.width / 2;
+        const targetTop = containerRect.top + containerRect.height / 2 - tempRect.height / 2;
+
+        const offsets = keepLetters.map((letter, i) => {
+            const from = letter.getBoundingClientRect();
+            const to = tempLetterSpans[i].getBoundingClientRect();
+
+            const to_left = to.left - tempRect.left + targetLeft;
+            const to_top = to.top - tempRect.top + targetTop;
+
+            return {
+                x: to_left - from.left,
+                y: to_top - from.top
+            };
+        });
+
+        document.body.removeChild(temp);
         return offsets;
     }
 
@@ -167,7 +205,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
             keepLetters.forEach((letter, i) => {
                 tls.to(letter, {
-                    x: offsets[i],
+                    x: offsets[i].x,
+                    y: offsets[i].y,
                     duration: 1,
                     ease: 'power2.inOut'
                 }, 1);
@@ -210,9 +249,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-
-
-
 
 
 
