@@ -823,9 +823,7 @@ video{
     .directi-top{
         max-width: 63%;
     }
-    .directions-content {
-        padding: 0 60px;
-    }
+
     p {
         font-size: 16px;
     }
@@ -952,9 +950,7 @@ video{
 }
 
 @media (max-width: 1020px){
-    .directions-content {
-        padding: 0 16px;
-    }
+
 
 
     header .btn-request{
@@ -1240,5 +1236,9 @@ video{
     h2 {
         font-size: 40px;
         line-height: 47px;
+    }
+    .directions-title {
+        font-size: 28px;
+        line-height: 40px;
     }
 }
