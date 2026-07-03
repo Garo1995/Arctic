@@ -109,151 +109,159 @@ infraTl.to(".infrast-title", {
 
 
 
-
-
-
 window.addEventListener('DOMContentLoaded', () => {
 
-    const letters = gsap.utils.toArray('.northern-verb');
-    const keepIndexes = [0, 1, 8, 9, 19];
-    const keepLetters = keepIndexes.map(i => letters[i]);
-    const hideLetters = letters.filter((_, i) => !keepIndexes.includes(i));
-    const container = document.querySelector('.northern-anime');
-    const mobileTitle = document.querySelector('.mobile-title');
+    // ждём полной загрузки шрифтов — иначе размеры букв на сервере
+    // посчитаются неверно (fallback-шрифт вместо настоящего)
+    document.fonts.ready.then(init);
 
-    // изначально скрываем mobile-title (появится по скроллу)
-    gsap.set(mobileTitle, { display: 'none', opacity: 0 });
+    function init() {
 
-    // приподнимаем keepLetters, чтобы они всегда были поверх исчезающих соседей
-    gsap.set(keepLetters, { position: 'relative', zIndex: 10 });
+        const letters = gsap.utils.toArray('.northern-verb');
+        const keepIndexes = [0, 1, 8, 9, 19];
+        const keepLetters = keepIndexes.map(i => letters[i]);
+        const hideLetters = letters.filter((_, i) => !keepIndexes.includes(i));
+        const container = document.querySelector('.northern-anime');
+        const mobileTitle = document.querySelector('.mobile-title');
 
-    // считает X и Y смещение, используя реально отрендеренное слово
-    // (с правильным кернингом) — буквы сходятся в одну линию "один в один"
-    function calcOffsets() {
-        const targetWord = keepIndexes.map(i => letters[i].textContent).join('');
-        const refStyle = window.getComputedStyle(keepLetters[0]);
+        // autoAlpha = opacity + visibility, анимируется плавно,
+        // в отличие от display, который переключается мгновенно
+        gsap.set(mobileTitle, { autoAlpha: 0 });
+        gsap.set(keepLetters, { position: 'relative', zIndex: 10 });
 
-        const temp = document.createElement('span');
-        temp.style.position = 'fixed';
-        temp.style.visibility = 'hidden';
-        temp.style.left = '0';
-        temp.style.top = '0';
-        temp.style.whiteSpace = 'nowrap';
-        temp.style.fontFamily = refStyle.fontFamily;
-        temp.style.fontSize = refStyle.fontSize;
-        temp.style.fontWeight = refStyle.fontWeight;
-        temp.style.fontStyle = refStyle.fontStyle;
-        temp.style.letterSpacing = refStyle.letterSpacing;
-        temp.style.textTransform = refStyle.textTransform;
+        const anchorLetter = letters[8];
 
-        const tempLetterSpans = [];
-        targetWord.split('').forEach(ch => {
-            const s = document.createElement('span');
-            s.textContent = ch;
-            temp.appendChild(s);
-            tempLetterSpans.push(s);
-        });
+        function calcOffsets() {
+            const targetWord = keepIndexes.map(i => letters[i].textContent).join('');
+            const refStyle = window.getComputedStyle(keepLetters[0]);
 
-        document.body.appendChild(temp);
+            const temp = document.createElement('span');
+            temp.style.position = 'fixed';
+            temp.style.visibility = 'hidden';
+            temp.style.left = '0';
+            temp.style.top = '0';
+            temp.style.whiteSpace = 'nowrap';
+            temp.style.fontFamily = refStyle.fontFamily;
+            temp.style.fontSize = refStyle.fontSize;
+            temp.style.fontWeight = refStyle.fontWeight;
+            temp.style.fontStyle = refStyle.fontStyle;
+            temp.style.letterSpacing = refStyle.letterSpacing;
+            temp.style.textTransform = refStyle.textTransform;
 
-        const containerRect = container.getBoundingClientRect();
-        const tempRect = temp.getBoundingClientRect();
-        const targetLeft = containerRect.left + containerRect.width / 2 - tempRect.width / 2;
-        const targetTop = containerRect.top + containerRect.height / 2 - tempRect.height / 2;
-
-        const offsets = keepLetters.map((letter, i) => {
-            const from = letter.getBoundingClientRect();
-            const to = tempLetterSpans[i].getBoundingClientRect();
-
-            const to_left = to.left - tempRect.left + targetLeft;
-            const to_top = to.top - tempRect.top + targetTop;
-
-            return {
-                x: to_left - from.left,
-                y: to_top - from.top
-            };
-        });
-
-        document.body.removeChild(temp);
-        return offsets;
-    }
-
-    ScrollTrigger.matchMedia({
-
-        // ===== ДЕСКТОП =====
-        "(min-width: 768px)": function () {
-
-            const offsets = calcOffsets();
-
-            const tls = gsap.timeline({
-                scrollTrigger: {
-                    trigger: '.northern-sec',
-                    start: 'top top',
-                    end: '+=200%',
-                    scrub: true,
-                    pin: true
-                }
+            const tempLetterSpans = [];
+            targetWord.split('').forEach(ch => {
+                const s = document.createElement('span');
+                s.textContent = ch;
+                temp.appendChild(s);
+                tempLetterSpans.push(s);
             });
 
-            tls.to(hideLetters, {
-                opacity: 0,
-                y: 1,
-                stagger: 0.03,
-                duration: 1,
-                ease: 'power1.inOut'
-            }, 0);
+            document.body.appendChild(temp);
 
-            keepLetters.forEach((letter, i) => {
-                tls.to(letter, {
-                    x: offsets[i].x,
-                    y: offsets[i].y,
-                    duration: 1,
-                    ease: 'power2.inOut'
-                }, 1);
-            });
-        },
+            const containerRect = container.getBoundingClientRect();
+            const tempRect = temp.getBoundingClientRect();
+            const targetLeft = containerRect.left + containerRect.width / 2 - tempRect.width / 2;
+            const anchorRect = anchorLetter.getBoundingClientRect();
 
-        // ===== МОБИЛКА =====
-        "(max-width: 767px)": function () {
+            const offsets = keepLetters.map((letter, i) => {
+                const from = letter.getBoundingClientRect();
+                const to = tempLetterSpans[i].getBoundingClientRect();
+                const to_left = to.left - tempRect.left + targetLeft;
 
-            const tlm = gsap.timeline({
-                scrollTrigger: {
-                    trigger: '.northern-sec',
-                    start: 'top top',
-                    end: '+=150%',
-                    scrub: true,
-                    pin: true
-                }
+                return {
+                    x: to_left - from.left,
+                    y: anchorRect.top - from.top
+                };
             });
 
-            // все буквы по очереди медленно исчезают
-            tlm.to(letters, {
-                opacity: 0,
-                y: 1,
-                display: 'none',
-
-                stagger: 0.08,
-                duration: 1,
-                ease: 'power1.inOut'
-            }, 0);
-
-            // после исчезновения плавно появляется "СЕВЕР"
-            tlm.to(mobileTitle, {
-                opacity: 1,
-                display: 'block',
-                duration: 1,
-                ease: 'power1.inOut'
-            }, 1.2);
+            document.body.removeChild(temp);
+            return offsets;
         }
 
-    });
+        ScrollTrigger.matchMedia({
+
+            // ===== ДЕСКТОП =====
+            "(min-width: 768px)": function () {
+
+                const offsets = calcOffsets();
+
+                const tls = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.northern-sec',
+                        start: 'top top',
+                        end: '+=200%',
+                        scrub: true,
+                        pin: true,
+                        invalidateOnRefresh: true
+                    }
+                });
+
+                tls.to(hideLetters, {
+                    opacity: 0,
+                    y: 1,
+                    stagger: 0.03,
+                    duration: 1,
+                    ease: 'power1.inOut'
+                }, 0);
+
+                keepLetters.forEach((letter, i) => {
+                    tls.to(letter, {
+                        x: offsets[i].x,
+                        y: offsets[i].y,
+                        duration: 1,
+                        ease: 'power2.inOut'
+                    }, 1);
+                });
+            },
+
+            // ===== МОБИЛКА =====
+            "(max-width: 767px)": function () {
+
+                gsap.set(letters, { autoAlpha: 1, y: 0 });
+                gsap.set(mobileTitle, { autoAlpha: 0 });
+
+                const fadeDuration = 1;
+                const staggerStep = 0.08;
+                const lettersEndTime = staggerStep * (letters.length - 1) + fadeDuration;
+
+                const tlm = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.northern-sec',
+                        start: 'top top',
+                        end: '+=150%',
+                        scrub: true,
+                        pin: true,
+                        invalidateOnRefresh: true
+                    }
+                });
+
+                // все буквы по очереди медленно исчезают
+                tlm.to(letters, {
+                    autoAlpha: 0,
+                    y: 1,
+                    stagger: staggerStep,
+                    duration: fadeDuration,
+                    ease: 'power1.inOut'
+                }, 0);
+
+                // "СЕВЕР" появляется только после того, как ВСЕ буквы исчезли
+                tlm.to(mobileTitle, {
+                    autoAlpha: 1,
+                    duration: 1,
+                    ease: 'power1.inOut'
+                }, lettersEndTime + 0.2);
+
+                return () => {
+                    gsap.set(letters, { autoAlpha: 1, y: 0 });
+                    gsap.set(mobileTitle, { autoAlpha: 0 });
+                };
+            }
+
+        });
+
+    }
 
 });
-
-
-
-
-
 
 
 
