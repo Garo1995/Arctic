@@ -317,50 +317,56 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 5: COUNT-SCROLL (числовые счётчики)
 // =====================================================
+window.addEventListener('DOMContentLoaded', () => {
+
+    const countEls = document.querySelectorAll('.count-scroll');
+    if (!countEls.length) return;
+
+    const parsed = [];
+
+    countEls.forEach(el => {
+        const original = el.textContent.trim();
+        const match = original.match(/^(-?[\d.,]+)(.*)$/);
+        if (!match) return;
+
+        const num = parseFloat(match[1].replace(/,/g, ''));
+        const suffix = match[2].trim();
+        if (isNaN(num)) return;
+
+        el.textContent = '0';
+        parsed.push({ el, num, suffix });
+    });
+
+    if (!parsed.length) return;
+
+    ScrollTrigger.create({
+        trigger: '.scale-main',
+        start: 'top 70%',
+        once: true,
+        onEnter: () => {
+            parsed.forEach(({ el, num, suffix }) => {
+                const obj = { val: 0 };
+                gsap.to(obj, {
+                    val: num,
+                    duration: 2,
+                    ease: 'power2.out',
+                    onUpdate: () => {
+                        el.textContent = Math.floor(obj.val);
+                    },
+                    onComplete: () => {
+                        el.textContent = num + suffix;
+                    }
+                });
+            });
+        }
+    });
+
+});
 
 
 // =====================================================
 // БЛОК 6: MISTAKES
 // =====================================================
-window.addEventListener('DOMContentLoaded', () => {
-
-    const mistakesTitle = document.querySelector(".mistakes-title");
-    const mistakesMain   = document.querySelector(".mistakes-main");
-    if (!mistakesTitle || !mistakesMain) return;
-
-    gsap.set(mistakesTitle, {
-        opacity: 0,
-        y: 200
-    });
-
-    const mistakesTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: mistakesMain,
-            start: "top top",
-            end: "+=150%",
-            pin: true,
-            scrub: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-        }
-    });
-
-    mistakesTl.to(mistakesTitle, {
-        opacity: 1,
-        y: 0,
-        ease: "none",
-        duration: 1
-    }, 0);
-
-    // сразу после появления, без "мёртвой" паузы
-    mistakesTl.to(mistakesTitle, {
-        y: -300,
-        opacity: 0,
-        ease: "none",
-        duration: 1
-    }, 1);
-
-});
 
 
 
