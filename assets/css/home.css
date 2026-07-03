@@ -306,8 +306,6 @@ video{
 @media (max-width: 767px) {
     .directions-pin {
         position: relative;
-        height: auto;
-        overflow: visible;
     }
 
     .directions-slides {
