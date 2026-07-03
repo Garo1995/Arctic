@@ -277,27 +277,30 @@ video{
 
 
 .directions-sec {
-    height: 400vh; /* 100vh × количество слайдов */
-    z-index: 22;
-    margin-top: -2px;
+    --directions-slides: 4;
+    position: relative;
 }
 
-
 .directions-pin {
-    position: relative;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     background: #09121F;
-
+    box-sizing: border-box;
 }
 
 /* --- картинки --- */
 .directions-slides {
     position: relative;
-    inset: 0;
-    max-height: 68vh;
-    height: 800px;
+    flex: 0 0 auto;
+    width: 100%;
+    height: min(800px, 58vh);
+    max-height: 58vh;
 }
 
 .directions-slide {
@@ -345,6 +348,8 @@ video{
     width: 4px;
     background: #9DBCD6;
     border-radius: 5px;
+    top: calc(var(--slide-index, 0) * (100% / var(--directions-slides, 4)));
+    height: calc(100% / var(--directions-slides, 4));
     transition: top 0.4s ease, height 0.4s ease;
 }
 .directions-number {
@@ -360,29 +365,32 @@ video{
 }
 
 .directions-bottom {
+    flex: 0 0 auto;
     background: #09121F;
-    margin-top: 60px;
+    margin-top: auto;
+    padding-top: 40px;
     z-index: 10;
     position: relative;
 }
-.directions-bottom .container {
+.directions-bottom-stage {
     position: relative;
+    width: 100%;
 }
 .directions-content {
     transition: opacity 0.6s ease;
-
-
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .directions-content.active {
     opacity: 1;
     pointer-events: auto;
+    visibility: visible;
 }
 
 .directions-bottom-inner {
@@ -462,6 +470,8 @@ video{
 
 
 .scale-main{
+    position: relative;
+    z-index: 1;
     padding: 120px 0;
     overflow: hidden;
 }
@@ -541,15 +551,6 @@ video{
 
 
 
-
-
-.mistakes-main{
-    height: 100vh!important;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
 .mistakes-main:after{
     content: "";
     position: absolute;
@@ -560,6 +561,16 @@ video{
     background: linear-gradient(270deg, rgba(6, 13, 24, 0) 0%, rgba(6, 13, 24, 0.8) 85.83%);
 
 }
+
+.mistakes-main{
+    position: relative;
+    z-index: 1;
+    height: 100vh!important;
+    width: 100%;
+    overflow: hidden;
+}
+
+
 .mistakes-video{
     width: 100%;
     height: 100%;
@@ -1072,8 +1083,8 @@ video{
         font-size: 46px;
     }
     .directions-slides {
-        max-height: 58vh;
-        height: 600px;
+        height: min(600px, 50vh);
+        max-height: 50vh;
     }
     .scale-title h3 {
         line-height: 32px;
@@ -1215,8 +1226,8 @@ video{
         text-align: center;
     }
     .directions-slides {
+        height: min(384px, 45vh);
         max-height: 45vh;
-        height: 384px;
     }
     .directions-label {
         font-size: 16px;
