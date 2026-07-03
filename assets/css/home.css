@@ -267,12 +267,9 @@ video{
 
 
 .directions-sec {
-    position: relative;
-    height: auto;
+    height: 400vh; /* 100vh × количество слайдов */
     z-index: 22;
     margin-top: -2px;
-    background: #09121F;
-
 }
 .directi-top{
     position: absolute;
@@ -289,28 +286,10 @@ video{
 .directions-pin {
     position: relative;
     width: 100%;
+    height: 100vh;
     overflow: hidden;
+    background: #09121F;
 
-}
-@media (min-width: 768px) {
-    .directions-sec {
-        height: 400vh; /* можно оставить 4 шага = 300–400vh, но лучше контролировать через JS */
-    }
-    .directions-pin {
-        height: 100vh;
-        overflow: hidden;
-    }
-}
-
-/* мобильный режим — НИКАКОГО pinned поведения */
-@media (max-width: 767px) {
-    .directions-pin {
-        position: relative;
-    }
-
-    .directions-slides {
-        position: relative;
-    }
 }
 
 /* --- картинки --- */

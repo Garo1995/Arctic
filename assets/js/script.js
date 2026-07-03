@@ -257,13 +257,21 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 window.addEventListener('DOMContentLoaded', () => {
 
-    const slides   = gsap.utils.toArray('.directions-slide');
-    const contents = gsap.utils.toArray('.directions-content');
-    const numberEl = document.querySelector('.directions-number');
+    const slides    = gsap.utils.toArray('.directions-slide');
+    const contents  = gsap.utils.toArray('.directions-content');
+    const numberEl  = document.querySelector('.directions-number');
+    const lineEl    = document.querySelector('.directions-line');
     const lineInner = document.querySelector('.directions-line-inner');
+    const total     = slides.length;
 
-    const total = slides.length;
+    if (!total || !numberEl || !lineEl || !lineInner) return;
+
     let current = -1;
+
+    function updateLine(index) {
+        const segH = lineEl.offsetHeight / total;
+        gsap.to(lineInner, { top: index * segH, height: segH, duration: 0.4, ease: 'power2.inOut' });
+    }
 
     function switchTo(index) {
         if (index === current) return;
@@ -272,55 +280,38 @@ window.addEventListener('DOMContentLoaded', () => {
         slides.forEach((s, i) => s.classList.toggle('active', i === index));
         contents.forEach((c, i) => c.classList.toggle('active', i === index));
 
-        numberEl.textContent = String(index + 1).padStart(2, '0');
-
-        gsap.to(lineInner, {
-            yPercent: index * (100 / (total - 1)),
-            duration: 0.3,
-            ease: 'power2.out'
+        gsap.to(numberEl, {
+            opacity: 0, duration: 0.2,
+            onComplete: () => {
+                numberEl.textContent = String(index + 1).padStart(2, '0');
+                gsap.to(numberEl, { opacity: 0.8, duration: 0.3 });
+            }
         });
+
+        updateLine(index);
     }
 
-    function desktop() {
+    // ждём полной загрузки (картинки слайдов), иначе lineEl.offsetHeight
+    // и позиции ScrollTrigger посчитаются по неверным размерам
+    window.addEventListener('load', () => {
         switchTo(0);
 
         ScrollTrigger.create({
             trigger: '.directions-sec',
             start: 'top top',
-            end: () => "+=" + window.innerHeight * (total - 1),
+            end: 'bottom bottom',
             pin: '.directions-pin',
             anticipatePin: 1,
             invalidateOnRefresh: true,
-
             onUpdate: (self) => {
-                const index = Math.round(self.progress * (total - 1));
+                const index = Math.min(total - 1, Math.floor(self.progress * total));
                 switchTo(index);
             }
         });
-    }
-
-    function mobile() {
-        switchTo(0);
-
-        // ВАЖНО: теперь реальный scroll control
-        ScrollTrigger.create({
-            trigger: '.directions-sec',
-            start: 'top 80%',
-            end: 'bottom top',
-
-            onUpdate: (self) => {
-                const index = Math.floor(self.progress * total);
-                switchTo(Math.min(total - 1, index));
-            }
-        });
-    }
-
-    ScrollTrigger.matchMedia({
-        "(min-width: 768px)": desktop,
-        "(max-width: 767px)": mobile
     });
 
 });
+
 
 
 // =====================================================
@@ -376,6 +367,50 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 6: MISTAKES
 // =====================================================
+window.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.querySelector(".mistakes-main");
+    const title   = document.querySelector(".mistakes-title");
+
+    if (!section || !title) return;
+
+    // безопасный init (чтобы не ломалось при повторной инициализации)
+    ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === section) t.kill();
+    });
+
+    const MISTAKES_ANIM = gsap.timeline({
+        scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+        }
+    });
+
+    MISTAKES_ANIM.set(title, {
+        opacity: 0,
+        y: 200
+    });
+
+    MISTAKES_ANIM.to(title, {
+        opacity: 1,
+        y: 0,
+        ease: "none",
+        duration: 0.6
+    });
+
+    MISTAKES_ANIM.to(title, {
+        opacity: 0,
+        y: -200,
+        ease: "none",
+        duration: 0.6
+    });
+});
 
 
 
