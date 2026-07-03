@@ -109,10 +109,12 @@ infraTl.to(".infrast-title", {
 
 
 
+
+
 window.addEventListener('DOMContentLoaded', () => {
 
-    // ждём полной загрузки шрифтов — иначе размеры букв на сервере
-    // посчитаются неверно (fallback-шрифт вместо настоящего)
+    // ждём загрузки шрифта — иначе на сервере размеры букв
+    // считаются неверно и слово "ломается"
     document.fonts.ready.then(init);
 
     function init() {
@@ -124,11 +126,12 @@ window.addEventListener('DOMContentLoaded', () => {
         const container = document.querySelector('.northern-anime');
         const mobileTitle = document.querySelector('.mobile-title');
 
-        // autoAlpha = opacity + visibility, анимируется плавно,
-        // в отличие от display, который переключается мгновенно
-        gsap.set(mobileTitle, { autoAlpha: 0 });
+        // изначально скрываем mobile-title (появится по скроллу)
+        gsap.set(mobileTitle, { display: 'none', opacity: 0 });
+
         gsap.set(keepLetters, { position: 'relative', zIndex: 10 });
 
+        // буква-якорь — задаёт итоговую линию по Y, сама никуда не двигается
         const anchorLetter = letters[8];
 
         function calcOffsets() {
@@ -217,44 +220,34 @@ window.addEventListener('DOMContentLoaded', () => {
             // ===== МОБИЛКА =====
             "(max-width: 767px)": function () {
 
-                gsap.set(letters, { autoAlpha: 1, y: 0 });
-                gsap.set(mobileTitle, { autoAlpha: 0 });
-
-                const fadeDuration = 1;
-                const staggerStep = 0.08;
-                const lettersEndTime = staggerStep * (letters.length - 1) + fadeDuration;
-
                 const tlm = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.northern-sec',
                         start: 'top top',
                         end: '+=150%',
                         scrub: true,
-                        pin: true,
-                        invalidateOnRefresh: true
+                        pin: true
                     }
                 });
 
                 // все буквы по очереди медленно исчезают
                 tlm.to(letters, {
-                    autoAlpha: 0,
+                    opacity: 0,
                     y: 1,
-                    stagger: staggerStep,
-                    duration: fadeDuration,
+                    display: 'none',
+
+                    stagger: 0.08,
+                    duration: 1,
                     ease: 'power1.inOut'
                 }, 0);
 
-                // "СЕВЕР" появляется только после того, как ВСЕ буквы исчезли
+                // после исчезновения плавно появляется "СЕВЕР"
                 tlm.to(mobileTitle, {
-                    autoAlpha: 1,
+                    opacity: 1,
+                    display: 'block',
                     duration: 1,
                     ease: 'power1.inOut'
-                }, lettersEndTime + 0.2);
-
-                return () => {
-                    gsap.set(letters, { autoAlpha: 1, y: 0 });
-                    gsap.set(mobileTitle, { autoAlpha: 0 });
-                };
+                }, 1.2);
             }
 
         });
@@ -262,6 +255,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+
+
+
+
 
 
 
@@ -405,44 +403,37 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-// БЛОК БЕЗ ЦИФРЫ (mistakes)
-// ============================
 function initMistakes() {
-    gsap.set(".mistakes-title", {
-        opacity: 0,
-        y: 320
-    });
+    gsap.set(".mistakes-title", { opacity: 0, y: 320 });
 
-    const mistakesTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: ".mistakes-main",
-            start: "top top",
-            end: "+=150%",
-            pin: true,
-            scrub: true,
-            anticipatePin: 1
+    ScrollTrigger.matchMedia({
+        "(min-width: 768px)": function () {
+            buildMistakesTimeline("+=150%");
+        },
+        "(max-width: 767px)": function () {
+            buildMistakesTimeline("+=100%"); // короче для мобилки
         }
     });
 
-    mistakesTl.to(".mistakes-title", {
-        opacity: 1,
-        y: 0,
-        ease: "none",
-        duration: 1
-    }, 0);
+    function buildMistakesTimeline(endValue) {
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".mistakes-main",
+                start: "top top",
+                end: endValue,
+                pin: true,
+                scrub: true,
+                anticipatePin: 1
+            }
+        });
 
-    mistakesTl.to(".mistakes-title", {
-        y: -450,
-        opacity: 0,
-        ease: "none",
-        duration: 1
-    }, 1.5);
+        tl.to(".mistakes-title", { opacity: 1, y: 0, ease: "none", duration: 1 }, 0);
+        tl.to(".mistakes-title", { y: -450, opacity: 0, ease: "none", duration: 1 }, 1);
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     initMistakes();
 });
-
 
 
