@@ -291,9 +291,7 @@ window.addEventListener('DOMContentLoaded', () => {
         updateLine(index);
     }
 
-    // ждём полной загрузки (картинки слайдов), иначе lineEl.offsetHeight
-    // и позиции ScrollTrigger посчитаются по неверным размерам
-    window.addEventListener('load', () => {
+    function initDirectionsScroll() {
         switchTo(0);
 
         ScrollTrigger.create({
@@ -308,9 +306,25 @@ window.addEventListener('DOMContentLoaded', () => {
                 switchTo(index);
             }
         });
-    });
+    }
+
+    // если страница УЖЕ полностью загружена к этому моменту —
+    // 'load' больше никогда не наступит, поэтому запускаем сразу
+    if (document.readyState === 'complete') {
+        initDirectionsScroll();
+    } else {
+        window.addEventListener('load', initDirectionsScroll);
+    }
 
 });
+
+
+
+
+
+
+
+
 
 
 // =====================================================
@@ -405,6 +419,12 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 1);
 
 });
+
+
+
+
+
+
 
 
 // =====================================================
