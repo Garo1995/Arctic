@@ -230,12 +230,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-
-gsap.registerPlugin(ScrollTrigger);
-
 window.addEventListener('DOMContentLoaded', () => {
 
     const slides    = gsap.utils.toArray('.directions-slide');

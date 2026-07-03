@@ -214,11 +214,15 @@ video{
 }
 .northern-anime{
     position: relative;
+
 }
 
 .desktop-title{
     gap: 24px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
 }
 .northern-name {
     display: inline-flex;
