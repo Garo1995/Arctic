@@ -368,36 +368,46 @@ window.addEventListener('DOMContentLoaded', () => {
 // БЛОК 6: MISTAKES
 // =====================================================
 
-window.addEventListener('DOMContentLoaded', () => {
-    // Без этой строки GSAP не знает про ScrollTrigger — анимация не запустится.
-    gsap.registerPlugin(ScrollTrigger);
+// window.addEventListener('DOMContentLoaded', () => {
+//
+//     const mistakesTitle = document.querySelector(".mistakes-title");
+//     const mistakesMain   = document.querySelector(".mistakes-main");
+//     if (!mistakesTitle || !mistakesMain) return;
+//
+//     gsap.set(mistakesTitle, {
+//         opacity: 0,
+//         y: 200
+//     });
+//
+//     const mistakesTl = gsap.timeline({
+//         scrollTrigger: {
+//             trigger: mistakesMain,
+//             start: "top top",
+//             end: "+=150%",
+//             pin: true,
+//             scrub: true,
+//             anticipatePin: 1,
+//             invalidateOnRefresh: true
+//         }
+//     });
+//
+//     mistakesTl.to(mistakesTitle, {
+//         opacity: 1,
+//         y: 0,
+//         ease: "none",
+//         duration: 1
+//     }, 0);
+//
+//     // сразу после появления, без "мёртвой" паузы
+//     mistakesTl.to(mistakesTitle, {
+//         y: -300,
+//         opacity: 0,
+//         ease: "none",
+//         duration: 1
+//     }, 1);
+//
+// });
 
-    const section = document.querySelector(".mistakes-main");
-    const title   = document.querySelector(".mistakes-title");
-    if (!section || !title) return;
-
-    // безопасный init (чтобы не ломалось при повторной инициализации)
-    ScrollTrigger.getAll().forEach(t => {
-        if (t.trigger === section) t.kill();
-    });
-
-    const MISTAKES_ANIM = gsap.timeline({
-        scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=150%",
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-        }
-    });
-
-    MISTAKES_ANIM
-        .set(title, { opacity: 0, y: 200 })
-        .to(title, { opacity: 1, y: 0, ease: "none", duration: 0.6 })
-        .to(title, { opacity: 0, y: -200, ease: "none", duration: 0.6 });
-});
 
 
 
