@@ -53,6 +53,28 @@ p{
 }
 
 
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease-out;
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.animate-on-scroll.delay-100 { transition-delay: 0.1s; }
+.animate-on-scroll.delay-200 { transition-delay: 0.2s; }
+.animate-on-scroll.delay-300 { transition-delay: 0.3s; }
+.animate-on-scroll.delay-400 { transition-delay: 0.4s; }
+.animate-on-scroll.delay-500 { transition-delay: 0.5s; }
+.animate-on-scroll.delay-600 { transition-delay: 0.6s; }
+
+
+
 header{
     position: fixed;
     z-index: 91;
@@ -108,6 +130,37 @@ video{
     display: none;
 }
 
+.banner-info h1{
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 0.5s;
+}
+
+.banner-info h3{
+    opacity: 0;
+    transform: translateY(25px);
+    transition: 0.6s;
+
+}
+.banner-info p{
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.7s;
+
+}
+.banner-info .btn-request{
+    opacity: 0;
+    transform: translateY(35px);
+    transition: 0.8s;
+
+}
+.stack-anime .banner-info h1,
+.stack-anime .banner-info h3,
+.stack-anime .banner-info p,
+.stack-anime .banner-info .btn-request{
+    opacity: 1;
+    transform: translateY(0);
+}
 
 .stack{
     position:relative;
@@ -299,8 +352,8 @@ video{
     position: relative;
     flex: 0 0 auto;
     width: 100%;
-    height: min(800px, 58vh);
-    max-height: 58vh;
+    height: min(800px, 72vh);
+    max-height: 72vh;
 }
 
 .directions-slide {
