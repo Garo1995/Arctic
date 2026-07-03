@@ -403,37 +403,44 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-function initMistakes() {
-    gsap.set(".mistakes-title", { opacity: 0, y: 320 });
 
-    ScrollTrigger.matchMedia({
-        "(min-width: 768px)": function () {
-            buildMistakesTimeline("+=150%");
-        },
-        "(max-width: 767px)": function () {
-            buildMistakesTimeline("+=100%"); // короче для мобилки
+// БЛОК БЕЗ ЦИФРЫ (mistakes)
+// ============================
+function initMistakes() {
+    gsap.set(".mistakes-title", {
+        opacity: 0,
+        y: 320
+    });
+
+    const mistakesTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: ".mistakes-main",
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            scrub: true,
+            anticipatePin: 1
         }
     });
 
-    function buildMistakesTimeline(endValue) {
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".mistakes-main",
-                start: "top top",
-                end: endValue,
-                pin: true,
-                scrub: true,
-                anticipatePin: 1
-            }
-        });
+    mistakesTl.to(".mistakes-title", {
+        opacity: 1,
+        y: 0,
+        ease: "none",
+        duration: 1
+    }, 0);
 
-        tl.to(".mistakes-title", { opacity: 1, y: 0, ease: "none", duration: 1 }, 0);
-        tl.to(".mistakes-title", { y: -450, opacity: 0, ease: "none", duration: 1 }, 1);
-    }
+    mistakesTl.to(".mistakes-title", {
+        y: -450,
+        opacity: 0,
+        ease: "none",
+        duration: 1
+    }, 1.5);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     initMistakes();
 });
+
 
 
