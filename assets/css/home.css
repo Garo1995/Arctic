@@ -509,7 +509,7 @@ video{
 
 
 .mistakes-main{
-    height: 100vh;
+    height: 100vh!important;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -1070,6 +1070,11 @@ video{
         padding-top: 0;
         bottom: 0;
         padding-bottom: 120px;
+        height: auto;
+    }
+    .mistakes-main {
+        display: flex;
+        align-items: flex-end;
     }
     .contact-form:before{
         display: none;
@@ -1236,7 +1241,12 @@ video{
         letter-spacing: 0;
     }
 
-
+    .banner-cnt {
+        padding-bottom: 70px;
+    }
+    .banner-info h3 {
+        margin-bottom: 6px;
+    }
 
 }
 @media (max-width: 385px){

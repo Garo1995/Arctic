@@ -291,7 +291,9 @@ window.addEventListener('DOMContentLoaded', () => {
         updateLine(index);
     }
 
-    function initDirectionsScroll() {
+    // ждём полной загрузки (картинки слайдов), иначе lineEl.offsetHeight
+    // и позиции ScrollTrigger посчитаются по неверным размерам
+    window.addEventListener('load', () => {
         switchTo(0);
 
         ScrollTrigger.create({
@@ -306,24 +308,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 switchTo(index);
             }
         });
-    }
-
-    // если страница УЖЕ полностью загружена к этому моменту —
-    // 'load' больше никогда не наступит, поэтому запускаем сразу
-    if (document.readyState === 'complete') {
-        initDirectionsScroll();
-    } else {
-        window.addEventListener('load', initDirectionsScroll);
-    }
+    });
 
 });
-
-
-
-
-
-
-
 
 
 
@@ -380,58 +367,43 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 6: MISTAKES
 // =====================================================
-
-window.addEventListener("DOMContentLoaded", () => {
-
+window.addEventListener('DOMContentLoaded', () => {
 
     const mistakesTitle = document.querySelector(".mistakes-title");
-    const mistakesMain = document.querySelector(".mistakes-main");
-
+    const mistakesMain   = document.querySelector(".mistakes-main");
     if (!mistakesTitle || !mistakesMain) return;
 
     gsap.set(mistakesTitle, {
         opacity: 0,
-        y: 250
+        y: 200
     });
 
-    const tl = gsap.timeline({
+    const mistakesTl = gsap.timeline({
         scrollTrigger: {
             trigger: mistakesMain,
             start: "top top",
-            end: "+=120%",
+            end: "+=150%",
             pin: true,
-            pinSpacing: true,
-            scrub: 1,
+            scrub: true,
             anticipatePin: 1,
             invalidateOnRefresh: true
         }
     });
 
-    tl.to(mistakesTitle, {
+    mistakesTl.to(mistakesTitle, {
         opacity: 1,
         y: 0,
-        duration: 0.5,
-        ease: "none"
-    });
+        ease: "none",
+        duration: 1
+    }, 0);
 
-    tl.to(mistakesTitle, {
-        opacity: 0,
+    // сразу после появления, без "мёртвой" паузы
+    mistakesTl.to(mistakesTitle, {
         y: -300,
-        duration: 0.5,
-        ease: "none"
-    });
-
-    window.addEventListener("load", () => {
-        ScrollTrigger.refresh();
-    });
-
-    let resizeTimer;
-    window.addEventListener("resize", () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            ScrollTrigger.refresh();
-        }, 200);
-    });
+        opacity: 0,
+        ease: "none",
+        duration: 1
+    }, 1);
 
 });
 
@@ -442,7 +414,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 
-
+// =====================================================
+// ОБЩИЙ ПЕРЕСЧЁТ ПОСЛЕ ПОЛНОЙ ЗАГРУЗКИ СТРАНИЦЫ
+// (картинки, шрифты, всё содержимое) — ОБЯЗАТЕЛЬНО В САМОМ КОНЦЕ ФАЙЛА
+// =====================================================
+window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+});
 
 // =====================================================
 // ПЕРЕСЧЁТ ПРИ ИЗМЕНЕНИИ РАЗМЕРА ОКНА / ЭКРАНА
