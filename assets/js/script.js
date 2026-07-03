@@ -255,23 +255,18 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 4: DIRECTIONS (слайды с бегунком)
 // =====================================================
+
 window.addEventListener('DOMContentLoaded', () => {
 
-    const slides    = gsap.utils.toArray('.directions-slide');
-    const contents  = gsap.utils.toArray('.directions-content');
-    const numberEl  = document.querySelector('.directions-number');
-    const lineEl    = document.querySelector('.directions-line');
+    const slides   = gsap.utils.toArray('.directions-slide');
+    const contents = gsap.utils.toArray('.directions-content');
+    const numberEl = document.querySelector('.directions-number');
     const lineInner = document.querySelector('.directions-line-inner');
-    const total     = slides.length;
 
-    if (!total || !numberEl || !lineEl || !lineInner) return;
-
+    const total = slides.length;
     let current = -1;
 
-    function updateLine(index) {
-        const segH = lineEl.offsetHeight / total;
-        gsap.to(lineInner, { top: index * segH, height: segH, duration: 0.4, ease: 'power2.inOut' });
-    }
+    if (!total || !numberEl || !lineInner) return;
 
     function switchTo(index) {
         if (index === current) return;
@@ -280,34 +275,65 @@ window.addEventListener('DOMContentLoaded', () => {
         slides.forEach((s, i) => s.classList.toggle('active', i === index));
         contents.forEach((c, i) => c.classList.toggle('active', i === index));
 
-        gsap.to(numberEl, {
-            opacity: 0, duration: 0.2,
-            onComplete: () => {
-                numberEl.textContent = String(index + 1).padStart(2, '0');
-                gsap.to(numberEl, { opacity: 0.8, duration: 0.3 });
-            }
-        });
+        numberEl.textContent = String(index + 1).padStart(2, '0');
 
-        updateLine(index);
+        gsap.to(lineInner, {
+            yPercent: index * (100 / (total - 1)),
+            duration: 0.4,
+            ease: 'power2.out'
+        });
     }
 
-    // ждём полной загрузки (картинки слайдов), иначе lineEl.offsetHeight
-    // и позиции ScrollTrigger посчитаются по неверным размерам
-    window.addEventListener('load', () => {
+    function initDesktop() {
+
         switchTo(0);
 
         ScrollTrigger.create({
             trigger: '.directions-sec',
             start: 'top top',
-            end: 'bottom bottom',
+            end: () => "+=" + window.innerHeight * (total - 1),
             pin: '.directions-pin',
             anticipatePin: 1,
             invalidateOnRefresh: true,
+
             onUpdate: (self) => {
-                const index = Math.min(total - 1, Math.floor(self.progress * total));
+                const index = Math.round(self.progress * (total - 1));
                 switchTo(index);
             }
         });
+    }
+
+    function initMobile() {
+        // без pin, без ScrollTrigger логики
+        switchTo(0);
+
+        ScrollTrigger.create({
+            trigger: '.directions-sec',
+            start: 'top 70%',
+            end: 'bottom top',
+            onEnter: () => switchTo(0)
+        });
+    }
+
+    ScrollTrigger.addEventListener("refreshInit", () => {
+        current = -1;
+    });
+
+    window.addEventListener('load', () => {
+
+        ScrollTrigger.matchMedia({
+
+            "(min-width: 768px)": function () {
+                initDesktop();
+            },
+
+            "(max-width: 767px)": function () {
+                initMobile();
+            }
+
+        });
+
+        ScrollTrigger.refresh();
     });
 
 });
