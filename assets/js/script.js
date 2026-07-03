@@ -368,7 +368,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // БЛОК 6: MISTAKES
 // =====================================================
 window.addEventListener('DOMContentLoaded', () => {
-    gsap.registerPlugin(ScrollTrigger);
 
     const section = document.querySelector(".mistakes-main");
     const title   = document.querySelector(".mistakes-title");
