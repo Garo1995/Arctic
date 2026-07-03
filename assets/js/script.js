@@ -380,7 +380,9 @@ window.addEventListener('DOMContentLoaded', () => {
 // =====================================================
 // БЛОК 6: MISTAKES
 // =====================================================
+
 window.addEventListener("DOMContentLoaded", () => {
+
     gsap.registerPlugin(ScrollTrigger);
 
     const mistakesTitle = document.querySelector(".mistakes-title");
@@ -389,38 +391,49 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!mistakesTitle || !mistakesMain) return;
 
     gsap.set(mistakesTitle, {
-        y: 320,
-        opacity: 0
+        opacity: 0,
+        y: 250
     });
 
     const tl = gsap.timeline({
-        defaults: {
-            ease: "none"
-        },
         scrollTrigger: {
             trigger: mistakesMain,
             start: "top top",
-            end: "+=100%",
+            end: "+=120%",
             pin: true,
-            scrub: 1,
             pinSpacing: true,
+            scrub: 1,
             anticipatePin: 1,
-            invalidateOnRefresh: true,
-            fastScrollEnd: true
+            invalidateOnRefresh: true
         }
     });
 
     tl.to(mistakesTitle, {
-        y: 0,
         opacity: 1,
-        duration: 0.5
+        y: 0,
+        duration: 0.5,
+        ease: "none"
     });
 
     tl.to(mistakesTitle, {
-        y: -450,
         opacity: 0,
-        duration: 0.5
+        y: -300,
+        duration: 0.5,
+        ease: "none"
     });
+
+    window.addEventListener("load", () => {
+        ScrollTrigger.refresh();
+    });
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 200);
+    });
+
 });
 
 
