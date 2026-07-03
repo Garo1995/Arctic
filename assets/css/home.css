@@ -262,15 +262,6 @@ video{
 
 
 
-
-
-
-
-.directions-sec {
-    height: 400vh; /* 100vh × количество слайдов */
-    z-index: 22;
-    margin-top: -2px;
-}
 .directi-top{
     position: absolute;
     top: 0;
@@ -282,6 +273,15 @@ video{
     content: url("../images/top-linea.png");
     z-index: 2;
 }
+
+
+
+.directions-sec {
+    height: 400vh; /* 100vh × количество слайдов */
+    z-index: 22;
+    margin-top: -2px;
+}
+
 
 .directions-pin {
     position: relative;
@@ -424,6 +424,41 @@ video{
 .directions-right p{
     opacity: 0.60;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 .scale-main{

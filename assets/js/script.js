@@ -368,51 +368,36 @@ window.addEventListener('DOMContentLoaded', () => {
 // БЛОК 6: MISTAKES
 // =====================================================
 
+window.addEventListener('DOMContentLoaded', () => {
+    // Без этой строки GSAP не знает про ScrollTrigger — анимация не запустится.
+    gsap.registerPlugin(ScrollTrigger);
 
-// window.addEventListener('DOMContentLoaded', () => {
-//
-//     const section = document.querySelector(".mistakes-main");
-//     const title   = document.querySelector(".mistakes-title");
-//
-//     if (!section || !title) return;
-//
-//     // безопасный init (чтобы не ломалось при повторной инициализации)
-//     ScrollTrigger.getAll().forEach(t => {
-//         if (t.trigger === section) t.kill();
-//     });
-//
-//     const MISTAKES_ANIM = gsap.timeline({
-//         scrollTrigger: {
-//             trigger: section,
-//             start: "top top",
-//             end: "+=150%",
-//             pin: true,
-//             scrub: 1,
-//             anticipatePin: 1,
-//             invalidateOnRefresh: true
-//         }
-//     });
-//
-//     MISTAKES_ANIM.set(title, {
-//         opacity: 0,
-//         y: 200
-//     });
-//
-//     MISTAKES_ANIM.to(title, {
-//         opacity: 1,
-//         y: 0,
-//         ease: "none",
-//         duration: 0.6
-//     });
-//
-//     MISTAKES_ANIM.to(title, {
-//         opacity: 0,
-//         y: -200,
-//         ease: "none",
-//         duration: 0.6
-//     });
-// });
+    const section = document.querySelector(".mistakes-main");
+    const title   = document.querySelector(".mistakes-title");
+    if (!section || !title) return;
 
+    // безопасный init (чтобы не ломалось при повторной инициализации)
+    ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === section) t.kill();
+    });
+
+    const MISTAKES_ANIM = gsap.timeline({
+        scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+        }
+    });
+
+    MISTAKES_ANIM
+        .set(title, { opacity: 0, y: 200 })
+        .to(title, { opacity: 1, y: 0, ease: "none", duration: 0.6 })
+        .to(title, { opacity: 0, y: -200, ease: "none", duration: 0.6 });
+});
 
 
 
