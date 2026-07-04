@@ -2,7 +2,7 @@
 $to = "M.O.C.T@yandex.ru";
 
 // ВАЖНО: поставь реальный домен
-$mail_from = "no-reply@yourdomain.com";
+$mail_from = "npakhomov2022@gmail.com";
 
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
