@@ -1,5 +1,5 @@
 <?php
-$to = "M.O.C.T@yandex.ru";
+$to = "https://arcticom.ru/";
 
 // ВАЖНО: поставь реальный домен
 $mail_from = "npakhomov2022@gmail.com";

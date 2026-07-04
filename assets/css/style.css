@@ -1,3 +1,6 @@
+@import "../font/font.css";
+
+
 h1, h2{
     font-family: 'Oswald';
     font-weight: 400;
@@ -1265,7 +1268,7 @@ video{
         font-size: 44px;
         line-height: 45px;
     }
-   h2 {
+    h2 {
         font-size: 44px;
         line-height: 54px;
     }
