@@ -1388,12 +1388,14 @@ video{
     }
 
     .banner-cnt {
-        padding-bottom: 70px;
+        padding-bottom: 80px;
     }
     .banner-info h3 {
-        margin-bottom: 6px;
+        margin-bottom: 0;
     }
-
+    .banner-info .btn-request {
+        margin-top: 8px;
+    }
 }
 @media (max-width: 385px){
     .contact-form {
