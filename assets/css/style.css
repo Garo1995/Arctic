@@ -170,12 +170,24 @@ video{
     height:100vh;
 }
 
-.panel{
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Обязательно: даем панелям заливку/фон, чтобы первая не просвечивала сквозь вторую */
+    will-change: transform;
+}
+
+/* Автоматически задаем порядок слоев: panel 1 = z-index: 1, panel 2 = z-index: 2 и т.д. */
+.panel:nth-child(1) { z-index: 1; }
+.panel:nth-child(2) { z-index: 2; }
+
+/* Убираем сдвиг через CSS по умолчанию для всех панелей, кроме первой,
+   чтобы даже до выполнения JS второй блок не висел на первом экране */
+.panel:not(:first-child) {
+    transform: translateY(100%);
 }
 
 
@@ -790,15 +802,46 @@ video{
     color: #5D7393;
 }
 
-.contact-form .input-error {
+
+/* Когда поле с ошибкой — делаем бордер/линию красной */
+.contact-input.has-error input {
     border-bottom: 2px solid red;
 }
-
-.contact-form  .input-ok {
-    border-bottom: 2px solid green;
+/* Опционально: делает надпись над полем тоже слегка красной */
+.contact-input.has-error span {
+    color: red;
 }
 
+.form-success-msg {
+    margin-top: 15px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    padding: 30px 30px;
+    max-width: 350px;
+    font-size: 22px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Настройки для плавного исчезновения */
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    visibility: hidden;
+    z-index: 0;
 
+}
+
+/* Класс для отображения */
+.form-success-msg.show {
+    visibility: visible;
+    z-index: 22;
+    opacity: 1;
+}
 
 
 

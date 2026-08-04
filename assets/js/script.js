@@ -76,21 +76,27 @@ function initStack() {
     const panels = gsap.utils.toArray(".panel");
     if (!panels.length) return;
 
-    gsap.set(panels.slice(1), { yPercent: 100 });
+    // Сбрасываем стили CSS-трансформации, чтобы GSAP управлял ими напрямую
+    gsap.set(panels.slice(1), { yPercent: 100, y: 0 });
 
     const stackTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".stack",
             start: "top top",
-            end: () => "+=" + (panels.length - 1) * vh(),
+            end: () => "+=" + (panels.length - 1) * window.innerHeight,
             pin: true,
             scrub: true,
+            anticipatePin: 1, // Предотвращает скачки при фиксации
             ...pinDefaults()
         }
     });
 
     panels.slice(1).forEach(panel => {
-        stackTl.to(panel, { yPercent: 0, ease: "none", duration: 1 });
+        stackTl.to(panel, {
+            yPercent: 0,
+            ease: "none",
+            duration: 1
+        });
     });
 }
 

@@ -121,7 +121,6 @@
                             <span class="northern-verb">н</span>
                             <span class="northern-verb">и</span>
                             <span class="northern-verb">я</span>
-                            <span class="northern-verb">Е</span>
                         </span>
                     </span>
 
@@ -254,7 +253,6 @@
             </div>
         </div>
     </section>
-
     <section class="scale-main">
         <div class="container">
             <div class="scale-cnt G-justify-between">
@@ -300,8 +298,6 @@
             </div>
         </div>
     </section>
-
-
     <section class="mistakes-main">
         <div class="mistakes-video G-flex">
             <video autoplay="autoplay" playsinline="" loop="loop" preload="" muted="muted">
@@ -324,8 +320,6 @@
             </div>
         </div>
     </section>
-
-
     <footer class="countact-main">
         <div class="container">
             <div id="contact"  class="countact-cnt G-align-start G-justify-between">
@@ -347,24 +341,26 @@
                     <form id="contactForm" action="send.php" method="POST" novalidate>
 
                         <div class="contact-input">
-                            <span>Имя</span>
+                            <span>Имя *</span>
                             <label>
-                                <input type="text" placeholder="Ваш имя" name="name" id="name" required>
+                                <input type="text" placeholder="Ваше имя" name="name" id="name">
                             </label>
+                        </div>
 
-                        </div>
                         <div class="contact-input">
-                            <span>Телефон</span>
+                            <span>Телефон *</span>
                             <label>
-                                <input type="tel" class="phone" placeholder="+7 (___) ___-__-__" name="phone" required>
+                                <input type="tel" class="phone" placeholder="+7 (___) ___-__-__" name="phone">
                             </label>
                         </div>
+
                         <div class="contact-input">
-                            <span>Email</span>
+                            <span>Email *</span>
                             <label>
-                                <input type="email" name="email" id="email" required placeholder="you@company.ru">
+                                <input type="email" name="email" id="email" placeholder="you@company.ru">
                             </label>
                         </div>
+
                         <div class="contact-input">
                             <span>Описание задачи</span>
                             <label>
@@ -376,13 +372,17 @@
                             <span>Оставить заявку</span>
                             <i class="arrow-top-right"></i>
                         </button>
+
+                        <!-- Блок успешной отправки (скрыт по умолчанию) -->
+                        <div id="formSuccess" class="form-success-msg">
+                            Ваша заявка успешно отправлена!
+                        </div>
+
                         <p>
-                            Нажимая кнопку “Отправить заявку”, вы соглашаетесь с <a href="#">условиями политики обработки
-                                персональных данных</a>
+                            Нажимая кнопку “Оставить заявку”, вы соглашаетесь с <a href="#">условиями политики обработки персональных данных</a>
                         </p>
 
                     </form>
-
                 </div>
 
             </div>
@@ -392,76 +392,108 @@
         </div>
     </footer>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
     <script src="assets/js/jquery-3.6.4.js"></script>
     <script src="assets/js/jquery.mask.js"></script>
     <script src="assets/js/script.js"></script>
     <script>
-        const form = document.querySelector("form");
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contactForm');
+            const successMsg = document.getElementById('formSuccess');
+            const submitBtn = document.getElementById('submitBtn');
 
-        const nameInput = document.querySelector('input[name="name"]');
-        const phoneInput = document.querySelector('input[name="phone"]');
-        const emailInput = document.querySelector('input[name="email"]');
-        const messageInput = document.querySelector('textarea[name="message"]');
+            if (!form || !successMsg) return;
 
-        function validateName(v) {
-            return /^[\p{L}\s'-]{2,60}$/u.test(v.trim());
-        }
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
 
-        function validatePhone(v) {
-            const digits = v.replace(/\D/g, "");
-            return digits.length >= 8 && digits.length <= 15;
-        }
-
-        function validateEmail(v) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-        }
-
-        function validateMessage(v) {
-            return v.trim().length >= 5;
-        }
-
-        function mark(input, isValid) {
-            input.classList.remove("input-error", "input-ok");
-            input.classList.add(isValid ? "input-ok" : "input-error");
-        }
-
-        // live validation
-        nameInput.addEventListener("input", () => {
-            mark(nameInput, validateName(nameInput.value));
-        });
-
-        phoneInput.addEventListener("input", () => {
-            mark(phoneInput, validatePhone(phoneInput.value));
-        });
-
-        emailInput.addEventListener("input", () => {
-            mark(emailInput, validateEmail(emailInput.value));
-        });
-
-        messageInput.addEventListener("input", () => {
-            mark(messageInput, validateMessage(messageInput.value));
-        });
-
-        // submit
-        form.addEventListener("submit", (e) => {
-            const nameOk = validateName(nameInput.value);
-            const phoneOk = validatePhone(phoneInput.value);
-            const emailOk = validateEmail(emailInput.value);
-            const messageOk = validateMessage(messageInput.value);
-
-            if (!nameOk || !phoneOk || !emailOk || !messageOk) {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                mark(nameInput, nameOk);
-                mark(phoneInput, phoneOk);
-                mark(emailInput, emailOk);
-                mark(messageInput, messageOk);
-            }
+                let isValid = true;
+
+                const nameInput = form.querySelector('[name="name"]');
+                const phoneInput = form.querySelector('[name="phone"]');
+                const emailInput = form.querySelector('[name="email"]');
+
+                const fieldsToValidate = [
+                    { input: nameInput, isEmail: false },
+                    { input: phoneInput, isEmail: false },
+                    { input: emailInput, isEmail: true }
+                ];
+
+                // 1. Проверяем поля (краснеют линии если пусто)
+                fieldsToValidate.forEach(({ input, isEmail }) => {
+                    if (!input) return;
+
+                    const container = input.closest('.contact-input') || input.parentElement;
+                    const value = input.value.trim();
+
+                    let hasError = false;
+
+                    if (!value) {
+                        hasError = true;
+                    } else if (isEmail && !isValidEmail(value)) {
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        container.classList.add('has-error');
+                        isValid = false;
+                    } else {
+                        container.classList.remove('has-error');
+                    }
+                });
+
+                if (!isValid) return;
+
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch('send.php', {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'success' || response.ok) {
+                        form.reset();
+
+                        // Показываем сообщение об успехе
+                        successMsg.style.display = 'block';
+
+                        setTimeout(() => {
+                            successMsg.classList.add('show');
+                        }, 20);
+
+                        // Медленно удаляем через 3.5 сек
+                        setTimeout(() => {
+                            successMsg.classList.remove('show');
+
+                            setTimeout(() => {
+                                successMsg.style.display = 'none';
+                            }, 800);
+                        }, 3500);
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Убираем красную линию при вводе
+            form.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('input', () => {
+                    const container = input.closest('.contact-input') || input.parentElement;
+                    if (container) {
+                        container.classList.remove('has-error');
+                    }
+                });
+            });
         });
     </script>
 </body>
