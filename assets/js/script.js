@@ -264,94 +264,125 @@ function initNorthern() {
     });
 }
 
+
 function initDirections() {
-    const section = document.querySelector('.directions-sec');
-    const pin = document.querySelector('.directions-pin');
-    const lineEl = document.querySelector('.directions-line');
-    const bottomStage = document.querySelector('.directions-bottom-stage');
-    const slides = gsap.utils.toArray('.directions-slide');
-    const contents = gsap.utils.toArray('.directions-content');
-    const numberEl = document.querySelector('.directions-number');
-    const total = slides.length;
 
-    if (!section || !pin || !lineEl || !bottomStage || !total || !numberEl) return;
+    gsap.registerPlugin(ScrollTrigger);
 
-    section.style.setProperty('--directions-slides', total);
-    lineEl.style.setProperty('--directions-slides', total);
+    const section = document.querySelector(".directions-sec");
+    const pin = document.querySelector(".directions-pin");
+    const lineEl = document.querySelector(".directions-line");
+    const bottomStage = document.querySelector(".directions-bottom-stage");
+    const contents = gsap.utils.toArray(".directions-content");
+    const numberEl = document.querySelector(".directions-number");
+
+    if (!section || !pin || !contents.length) return;
+
+    const total = contents.length;
 
     let current = -1;
+
+    function vh() {
+        return window.innerHeight;
+    }
 
     function getScrollDistance() {
         return (total - 1) * vh();
     }
 
     function measureBottomHeight() {
+
         let maxHeight = 0;
 
         contents.forEach(content => {
-            content.style.position = 'relative';
-            content.style.visibility = 'hidden';
-            content.style.opacity = '1';
-            content.style.pointerEvents = 'none';
+
+            content.style.position = "relative";
+            content.style.visibility = "hidden";
+            content.style.display = "block";
+
             maxHeight = Math.max(maxHeight, content.offsetHeight);
-            content.style.position = '';
-            content.style.visibility = '';
-            content.style.opacity = '';
-            content.style.pointerEvents = '';
+
+            content.style.position = "";
+            content.style.visibility = "";
+            content.style.display = "";
+
         });
 
-        bottomStage.style.minHeight = maxHeight + 'px';
+        bottomStage.style.minHeight = maxHeight + "px";
     }
 
     function syncSectionHeight() {
-        measureBottomHeight();
-        pin.style.height = vh() + 'px';
-        section.style.height = (getScrollDistance() + vh()) + 'px';
-    }
 
-    function getIndexFromProgress(progress) {
-        if (total === 1) return 0;
-        const clamped = Math.min(0.9999, Math.max(0, progress));
-        return Math.min(total - 1, Math.floor(clamped * total));
+        measureBottomHeight();
+
+        pin.style.height = vh() + "px";
+
     }
 
     function applySlide(index) {
-        if (index === current) return;
+
+        if (current === index) return;
+
         current = index;
 
-        slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
-        contents.forEach((content, i) => content.classList.toggle('active', i === index));
-        lineEl.style.setProperty('--slide-index', index);
-        numberEl.textContent = String(index + 1).padStart(2, '0');
-    }
+        contents.forEach((content, i) => {
 
-    function syncFromScroll(progress) {
-        applySlide(getIndexFromProgress(progress));
+            content.classList.toggle("active", i === index);
+
+        });
+
+        numberEl.textContent = String(index + 1).padStart(2, "0");
+
+        lineEl.style.setProperty("--slide-index", index);
+
     }
 
     syncSectionHeight();
+
     applySlide(0);
 
     ScrollTrigger.create({
+
         trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
+
+        start: "top top",
+
+        end: () => "+=" + getScrollDistance(),
+
+        pin: pin,
+
+        scrub: true,
+
+        anticipatePin: 1,
+
         invalidateOnRefresh: true,
+
         onUpdate(self) {
-            syncFromScroll(self.progress);
-        },
-        onEnter(self) {
-            syncFromScroll(self.progress);
-        },
-        onEnterBack(self) {
-            syncFromScroll(self.progress);
-        },
-        onLeaveBack() {
-            current = -1;
-            applySlide(0);
+
+            const index = Math.min(
+                total - 1,
+                Math.floor(self.progress * total)
+            );
+
+            applySlide(index);
+
         }
+
     });
+
+    window.addEventListener("resize", () => {
+
+        syncSectionHeight();
+
+        ScrollTrigger.refresh();
+
+    });
+
 }
+
+
+
+
 
 function initScale() {
     const countEls = document.querySelectorAll('.count-scroll');
